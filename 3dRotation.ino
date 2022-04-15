@@ -1,6 +1,6 @@
 /*
  * Project: 3dRotation
- * Licence: CC0
+ * License: CC0
  * 
  * created by Andreas Binder (inspired by https://wokwi.com/projects/328271658006610514)
  * 
