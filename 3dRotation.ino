@@ -1,5 +1,6 @@
 /*
  * Project: 3dRotation
+ * Description: A rotating 3d object on an ardunino uno with a SSD1306 oled display
  * License: CC0
  * 
  * created by Andreas Binder (inspired by https://wokwi.com/projects/328271658006610514)
