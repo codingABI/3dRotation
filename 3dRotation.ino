@@ -1,5 +1,6 @@
 /*
  * Project: 3dRotation
+ * Licence: CC0
  * 
  * created by Andreas Binder (inspired by https://wokwi.com/projects/328271658006610514)
  * 
@@ -151,25 +152,23 @@ void loop(void) {
   // draw triangles
   for (byte i=0;i<MAXTRIANGLES;i++) {
     if (!isBackfaceTriangle(i)) { // only front sides  
-      display.drawTriangle(x3dTo2D(triangles3d[i][0][0],triangles3d[i][0][2]),y3dTo2D(triangles3d[i][0][1],triangles3d[i][0][2]),
-        x3dTo2D(triangles3d[i][1][0],triangles3d[i][1][2]),y3dTo2D(triangles3d[i][1][1],triangles3d[i][1][2]),
-        x3dTo2D(triangles3d[i][2][0],triangles3d[i][2][2]),y3dTo2D(triangles3d[i][2][1],triangles3d[i][2][2]),SSD1306_WHITE);
+      display.drawTriangle(x3dTo2D(triangles3d[i][0][X],triangles3d[i][0][Z]),y3dTo2D(triangles3d[i][0][Y],triangles3d[i][0][Z]),
+        x3dTo2D(triangles3d[i][1][X],triangles3d[i][1][Z]),y3dTo2D(triangles3d[i][1][Y],triangles3d[i][1][Z]),
+        x3dTo2D(triangles3d[i][2][X],triangles3d[i][2][Z]),y3dTo2D(triangles3d[i][2][Y],triangles3d[i][2][Z]),SSD1306_WHITE);
     }
   }
 
   // draw rectangles
   for (byte i=0;i<MAXRECTS;i++) {
     if (!isBackfaceRect(i)) { // only front sides 
-      display.drawLine(x3dTo2D(rects3d[i][0][0],rects3d[i][0][2]),y3dTo2D(rects3d[i][0][1],rects3d[i][0][2]),
-        x3dTo2D(rects3d[i][1][0],rects3d[i][1][2]),y3dTo2D(rects3d[i][1][1],rects3d[i][1][2]), SSD1306_WHITE);
-      display.drawLine(x3dTo2D(rects3d[i][1][0],rects3d[i][1][2]),y3dTo2D(rects3d[i][1][1],rects3d[i][1][2]),
-        x3dTo2D(rects3d[i][2][0],rects3d[i][2][2]),y3dTo2D(rects3d[i][2][1],rects3d[i][2][2]), SSD1306_WHITE);
-      display.drawLine(x3dTo2D(rects3d[i][2][0],rects3d[i][2][2]),y3dTo2D(rects3d[i][2][1],rects3d[i][2][2]),
-        x3dTo2D(rects3d[i][3][0],rects3d[i][3][2]),y3dTo2D(rects3d[i][3][1],rects3d[i][3][2]),SSD1306_WHITE);
-      display.drawLine(x3dTo2D(rects3d[i][3][0],rects3d[i][3][2]),y3dTo2D(rects3d[i][3][1],rects3d[i][3][2]),
-        x3dTo2D(rects3d[i][0][0],rects3d[i][0][2]),y3dTo2D(rects3d[i][0][1],rects3d[i][0][2]), SSD1306_WHITE);
-
-
+      display.drawLine(x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z]),y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z]),
+        x3dTo2D(rects3d[i][1][X],rects3d[i][1][Z]),y3dTo2D(rects3d[i][1][Y],rects3d[i][1][Z]), SSD1306_WHITE);
+      display.drawLine(x3dTo2D(rects3d[i][1][X],rects3d[i][1][Z]),y3dTo2D(rects3d[i][1][Y],rects3d[i][1][Z]),
+        x3dTo2D(rects3d[i][2][X],rects3d[i][2][Z]),y3dTo2D(rects3d[i][2][Y],rects3d[i][2][Z]), SSD1306_WHITE);
+      display.drawLine(x3dTo2D(rects3d[i][2][X],rects3d[i][2][Z]),y3dTo2D(rects3d[i][2][Y],rects3d[i][2][Z]),
+        x3dTo2D(rects3d[i][3][X],rects3d[i][3][Z]),y3dTo2D(rects3d[i][3][Y],rects3d[i][3][Z]),SSD1306_WHITE);
+      display.drawLine(x3dTo2D(rects3d[i][3][X],rects3d[i][3][Z]),y3dTo2D(rects3d[i][3][Y],rects3d[i][3][Z]),
+        x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z]),y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z]), SSD1306_WHITE);
     }
   }
 
