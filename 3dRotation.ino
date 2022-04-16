@@ -1,12 +1,13 @@
 /*
  * Project: 3dRotation
- * Description: A rotating 3d object on an ardunino uno with a SSD1306 OLED display
+ * Description: A rotating 3d object on an ardunino uno with a SSD1306 OLED display.
  * License: CC0
  * 
  * created by codingABI (inspired by https://wokwi.com/projects/328271658006610514)
  * 
  * History:
  * 15.04.2022, Initial version
+ * 16.04.2022, Improve isBackfaceRect
  */
 
 #include <SPI.h>
@@ -87,18 +88,17 @@ bool isBackfaceTriangle(int i) {
   return ((Ax*By - Ay*Bx) < 0);  
 }
 
-// detect backsides for rectangles (clockwise = backside)
+// detect backsides for rectangles (clockwise = backside, based on idea from https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order)
 bool isBackfaceRect(int i) {
-  int Ax, Ay, Bx, By;
+  long sum=0;
+  for (byte j=0;j<3;j++) {
+    sum+=(x3dTo2D(rects3d[i][j+1][X],rects3d[i][j+1][Z])-x3dTo2D(rects3d[i][j][X],rects3d[i][j][Z]))
+      *(y3dTo2D(rects3d[i][j+1][Y],rects3d[i][j+1][Z])+y3dTo2D(rects3d[i][j][Y],rects3d[i][j][Z]));
+  }
+  sum+=(x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z])-x3dTo2D(rects3d[i][3][X],rects3d[i][3][Z]))     
+    *(y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z])+y3dTo2D(rects3d[i][3][Y],rects3d[i][3][Z]));
 
-  // check first three points shoud be also ok for rectangles
-  Ax = x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z]) - x3dTo2D(rects3d[i][1][X],rects3d[i][1][Z]);
-  Ay = y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z]) - y3dTo2D(rects3d[i][1][Y],rects3d[i][1][Z]);
-
-  Bx = x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z]) - x3dTo2D(rects3d[i][2][X],rects3d[i][2][Z]);
-  By = y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z]) - y3dTo2D(rects3d[i][2][Y],rects3d[i][2][Z]);
-
-  return ((Ax*By - Ay*Bx) < 0);  
+  return (sum >= 0);
 }
 
 void setup(void) {
