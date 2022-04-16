@@ -58,6 +58,7 @@ signed char points3d[MAXPOINTS][3] = {
 };
 
 signed char pointsRotated3d[MAXPOINTS][3];
+// List of pointers to points
 signed char* triangles3d[MAXTRIANGLES][3];
 signed char* rects3d[MAXRECTS][4];
 
@@ -141,7 +142,7 @@ void loop(void) {
   // clear display buffer
   display.clearDisplay();
 
-  // rotate by y and z axis and move by z
+  // rotate by y and z axis and move by x
   cachedCos = cos(radians(degree));
   cachedSin = sin(radians(degree));
   for (byte i=0;i<MAXPOINTS;i++) {
