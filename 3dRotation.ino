@@ -43,7 +43,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera 
 int viewerScale = 60; // 2d scale
 
-// origin points x,y,z
+// original points x,y,z
 signed char points3d[MAXPOINTS][3] = {
   {-32,32,32},
   {32,32,32},
