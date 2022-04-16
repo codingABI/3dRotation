@@ -1,6 +1,6 @@
 /*
  * Project: 3dRotation
- * Description: A rotating 3d object on an ardunino uno with a SSD1306 OLED display.
+ * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED display.
  * License: CC0
  * 
  * created by codingABI (inspired by https://wokwi.com/projects/328271658006610514)
