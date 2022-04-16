@@ -40,10 +40,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define MAXRECTS 4
 
 // global variables
-int viewerDistance = -200; // z-distance between center and viewer/camera 
+int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera 
 int viewerScale = 60; // 2d scale
 
-// points x,y,z
+// origin points x,y,z
 signed char points3d[MAXPOINTS][3] = {
   {-32,32,32},
   {32,32,32},
@@ -57,6 +57,7 @@ signed char points3d[MAXPOINTS][3] = {
   {0,-96,0}
 };
 
+// transformed points
 signed char pointsRotated3d[MAXPOINTS][3];
 // List of pointers to points
 signed char* triangles3d[MAXTRIANGLES][3];
