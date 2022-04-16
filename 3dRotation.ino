@@ -3,7 +3,7 @@
  * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED display.
  * License: CC0
  * 
- * created by codingABI (inspired by https://wokwi.com/projects/328271658006610514)
+ * created by codingABI https://github.com/codingABI/3dRotation (inspired by https://wokwi.com/projects/328271658006610514)
  * 
  * History:
  * 15.04.2022, Initial version
