@@ -53,5 +53,5 @@ For example: The order for polygon spanned by points P1 to P4 is **P4, P3, P2, P
 ## Hide backsides
 To detect which polygon is visible and needs to be drawn or not, the alignment of the points spanning the polygon is used. If the points are aligned in counterclockwise, the polygon will be drawn. If the alignment is counerclockwise, the polygon is invisible and will not be drawn.
 
-The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the alignments for the rectangles are shown. 
+The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the alignments for the rectangles are shown here: 
 ![alt text](/assets/images/DetectBacksides.svg)
