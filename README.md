@@ -30,7 +30,7 @@ For example: The arrangement for the polygon, spanned by points P1 to P4, is **P
 ![alt text](/assets/images/OrderRectangle0.svg)
 
 ## Triangles:
-| Nr | Arranged Points |
+| Nr | Arranged points |
 | --- | --- |
 | 0 | P1, P2, P9 |
 | 1 | P6, P5, P9 |
