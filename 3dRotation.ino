@@ -8,6 +8,7 @@
  * History:
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
+ * 17.04.2022, Fix degree 360
  */
 
 #include <SPI.h>
@@ -58,7 +59,7 @@ signed char points3d[MAXPOINTS][3] = {
 };
 
 // transformed points
-signed char pointsRotated3d[MAXPOINTS][3];
+signed char pointsTransformed3d[MAXPOINTS][3];
 // List of pointers to points
 signed char* triangles3d[MAXTRIANGLES][3];
 signed char* rects3d[MAXRECTS][4];
@@ -112,19 +113,19 @@ void setup(void) {
 
   // build mesh from points (all polygons must be defined counterclockwise, otherwise hiding of backsides will not work)
 
-  rects3d[0][0] = pointsRotated3d[P4]; rects3d[0][1] = pointsRotated3d[P3]; rects3d[0][2] = pointsRotated3d[P2]; rects3d[0][3] = pointsRotated3d[P1];
-  rects3d[1][0] = pointsRotated3d[P5]; rects3d[1][1] = pointsRotated3d[P6]; rects3d[1][2] = pointsRotated3d[P7]; rects3d[1][3] = pointsRotated3d[P8];
-  rects3d[2][0] = pointsRotated3d[P2]; rects3d[2][1] = pointsRotated3d[P3]; rects3d[2][2] = pointsRotated3d[P7]; rects3d[2][3] = pointsRotated3d[P6];
-  rects3d[3][0] = pointsRotated3d[P4]; rects3d[3][1] = pointsRotated3d[P1]; rects3d[3][2] = pointsRotated3d[P5]; rects3d[3][3] = pointsRotated3d[P8];
+  rects3d[0][0] = pointsTransformed3d[P4]; rects3d[0][1] = pointsTransformed3d[P3]; rects3d[0][2] = pointsTransformed3d[P2]; rects3d[0][3] = pointsTransformed3d[P1];
+  rects3d[1][0] = pointsTransformed3d[P5]; rects3d[1][1] = pointsTransformed3d[P6]; rects3d[1][2] = pointsTransformed3d[P7]; rects3d[1][3] = pointsTransformed3d[P8];
+  rects3d[2][0] = pointsTransformed3d[P2]; rects3d[2][1] = pointsTransformed3d[P3]; rects3d[2][2] = pointsTransformed3d[P7]; rects3d[2][3] = pointsTransformed3d[P6];
+  rects3d[3][0] = pointsTransformed3d[P4]; rects3d[3][1] = pointsTransformed3d[P1]; rects3d[3][2] = pointsTransformed3d[P5]; rects3d[3][3] = pointsTransformed3d[P8];
 
-  triangles3d[0][0] = pointsRotated3d[P1]; triangles3d[0][1] = pointsRotated3d[P2]; triangles3d[0][2] = pointsRotated3d[P9];
-  triangles3d[1][0] = pointsRotated3d[P6]; triangles3d[1][1] = pointsRotated3d[P5]; triangles3d[1][2] = pointsRotated3d[P9];
-  triangles3d[2][0] = pointsRotated3d[P2]; triangles3d[2][1] = pointsRotated3d[P6]; triangles3d[2][2] = pointsRotated3d[P9];
-  triangles3d[3][0] = pointsRotated3d[P5]; triangles3d[3][1] = pointsRotated3d[P1]; triangles3d[3][2] = pointsRotated3d[P9];
-  triangles3d[4][0] = pointsRotated3d[P3]; triangles3d[4][1] = pointsRotated3d[P4]; triangles3d[4][2] = pointsRotated3d[P10];
-  triangles3d[5][0] = pointsRotated3d[P4]; triangles3d[5][1] = pointsRotated3d[P8]; triangles3d[5][2] = pointsRotated3d[P10];
-  triangles3d[6][0] = pointsRotated3d[P8]; triangles3d[6][1] = pointsRotated3d[P7]; triangles3d[6][2] = pointsRotated3d[P10];
-  triangles3d[7][0] = pointsRotated3d[P7]; triangles3d[7][1] = pointsRotated3d[P3]; triangles3d[7][2] = pointsRotated3d[P10];
+  triangles3d[0][0] = pointsTransformed3d[P1]; triangles3d[0][1] = pointsTransformed3d[P2]; triangles3d[0][2] = pointsTransformed3d[P9];
+  triangles3d[1][0] = pointsTransformed3d[P6]; triangles3d[1][1] = pointsTransformed3d[P5]; triangles3d[1][2] = pointsTransformed3d[P9];
+  triangles3d[2][0] = pointsTransformed3d[P2]; triangles3d[2][1] = pointsTransformed3d[P6]; triangles3d[2][2] = pointsTransformed3d[P9];
+  triangles3d[3][0] = pointsTransformed3d[P5]; triangles3d[3][1] = pointsTransformed3d[P1]; triangles3d[3][2] = pointsTransformed3d[P9];
+  triangles3d[4][0] = pointsTransformed3d[P3]; triangles3d[4][1] = pointsTransformed3d[P4]; triangles3d[4][2] = pointsTransformed3d[P10];
+  triangles3d[5][0] = pointsTransformed3d[P4]; triangles3d[5][1] = pointsTransformed3d[P8]; triangles3d[5][2] = pointsTransformed3d[P10];
+  triangles3d[6][0] = pointsTransformed3d[P8]; triangles3d[6][1] = pointsTransformed3d[P7]; triangles3d[6][2] = pointsTransformed3d[P10];
+  triangles3d[7][0] = pointsTransformed3d[P7]; triangles3d[7][1] = pointsTransformed3d[P3]; triangles3d[7][2] = pointsTransformed3d[P10];
 }
 
 void loop(void) {
@@ -138,7 +139,7 @@ void loop(void) {
 
   // rotation degree per display frame
   degree = degree + 2;
-  if (degree > 360) degree = 0;
+  if (degree > 359) degree = 0;
 
   // clear display buffer
   display.clearDisplay();
@@ -147,9 +148,9 @@ void loop(void) {
   cachedCos = cos(radians(degree));
   cachedSin = sin(radians(degree));
   for (byte i=0;i<MAXPOINTS;i++) {
-    pointsRotated3d[i][X] = (points3d[i][X]*cachedCos - points3d[i][Z]*cachedSin)*cachedCos - points3d[i][Y]*cachedSin + cachedSin * 30;
-    pointsRotated3d[i][Y] = (points3d[i][X]*cachedCos - points3d[i][Z]*cachedSin)*cachedSin + points3d[i][Y]*cachedCos;
-    pointsRotated3d[i][Z] = points3d[i][X]*cachedSin + points3d[i][Z]*cachedCos; 
+    pointsTransformed3d[i][X] = (points3d[i][X]*cachedCos - points3d[i][Z]*cachedSin)*cachedCos - points3d[i][Y]*cachedSin + cachedSin * 30;
+    pointsTransformed3d[i][Y] = (points3d[i][X]*cachedCos - points3d[i][Z]*cachedSin)*cachedSin + points3d[i][Y]*cachedCos;
+    pointsTransformed3d[i][Z] = points3d[i][X]*cachedSin + points3d[i][Z]*cachedCos; 
   }
 
   // draw triangles
