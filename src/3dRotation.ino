@@ -1,6 +1,6 @@
 /*
  * Project: 3dRotation
- * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED 128x64 pixel display.
+ * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED display.
  * License: CC0
  * 
  * created by codingABI https://github.com/codingABI/3dRotation (inspired by https://wokwi.com/projects/328271658006610514)
@@ -8,7 +8,7 @@
  * History:
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
- * 17.04.2022, Fix degree 360 and rotation based in millis
+ * 17.04.2022, Fix degree 360 and change rotation based on millis
  */
 
 #include <SPI.h>
@@ -107,9 +107,13 @@ bool isBackfaceRect(int i) {
 void setup(void) {
   Serial.begin(9600);
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3D)) { // Address 0x3D for 128x64
-    Serial.println(F("SSD1306 allocation failed"));
+    Serial.println(F("SSD1306 allocation failed")); // Adafruit_SSD1306 needs ~ 59% free dynamic memory, otherwise fails 
     for(;;); // Don't proceed, loop forever
   }
+
+  // Font settings
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
 
   // build mesh from points (all polygons must be defined counterclockwise, otherwise hiding of backsides will not work)
 
@@ -179,8 +183,6 @@ void loop(void) {
 
   // show frames per second
   sprintf(strFPS,"fps %d",fps);
-  display.setTextColor(SSD1306_WHITE);
-  display.setTextSize(1);
   display.setCursor(0,55);
   display.println(strFPS);
 
