@@ -1,6 +1,6 @@
 /*
  * Project: 3dRotation
- * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED display.
+ * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED 128x64 pixel display.
  * License: CC0
  * 
  * created by codingABI https://github.com/codingABI/3dRotation (inspired by https://wokwi.com/projects/328271658006610514)
@@ -8,7 +8,7 @@
  * History:
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
- * 17.04.2022, Fix degree 360
+ * 17.04.2022, Fix degree 360 and rotation based in millis
  */
 
 #include <SPI.h>
@@ -135,11 +135,12 @@ void loop(void) {
   static int fps = 0;
   static int degree = 0;
 
-  startMS = millis();
 
-  // rotation degree per display frame
-  degree = degree + 2;
-  if (degree > 359) degree = 0;
+  // rotate every 25ms one degree
+  degree = (millis()/25) % 359;
+
+  // record start of frame
+  startMS = millis();
 
   // clear display buffer
   display.clearDisplay();
@@ -186,6 +187,7 @@ void loop(void) {
   // show display buffer on screen
   display.display();
 
+  // calculate frames per second
   endMS = millis();
-  fps = 1000/(endMS - startMS);
+  if (endMS - startMS > 0) fps = 1000/(endMS - startMS);
 }
