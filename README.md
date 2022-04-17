@@ -25,12 +25,12 @@ Simulation https://wokwi.com/projects/329034737849991764
 ## Inner/Outer
 To define which side of a polygon is inner or outer, all polygons (triangles or rectangles) are arranged counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn or not. 
 
-For example: The order for the polygon spanned by points P1 to P4 is **P4, P3, P2, P1**
+For example: The arrangement for the polygon, spanned by points P1 to P4, is **P4, P3, P2, P1**
 
 ![alt text](/assets/images/OrderRectangle0.svg)
 
 ## Triangles:
-| Nr | Ordered points |
+| Nr | Arranged Points |
 | --- | --- |
 | 0 | P1, P2, P9 |
 | 1 | P6, P5, P9 |
@@ -42,7 +42,7 @@ For example: The order for the polygon spanned by points P1 to P4 is **P4, P3, P
 | 7 | P7, P3, P10 |
 
 ## Rectangles:
-| Nr | Ordered points |
+| Nr | Arranged points |
 | --- | --- |
 | 0 | P4, P3, P2, P1 |
 | 1 | P5, P6, P7, P8 |
