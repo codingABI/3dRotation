@@ -50,7 +50,7 @@ For example: The arrangement for the polygon, spanned by points P1 to P4, is **P
 | 3 | P4, P1, P5, P8 |
 
 ## Hide backsides
-To detect which polygon is visible and needs to be drawn on screen or not, the arrangement of the points spanning the polygon is used. If the points are arranged in counterclockwise, the polygon will be drawn. If the arranged is counerclockwise, the polygon is invisible and will not be drawn.
+To detect which polygon is visible and needs to be drawn on screen or not, the arrangement of the points spanning the polygon is used. If the points are arranged in counterclockwise, the polygon will be drawn. If the arranged is clockwise, the polygon is invisible and will not be drawn.
 
 The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the arrangements for the rectangles are marked in the figure: 
 
