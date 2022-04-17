@@ -21,8 +21,9 @@ Dimensions of the 3d object:
 | P9 | 0 | 96 | 0 |
 | P10 | 0 | -96 | 0 |
 
-To detect which polygons is visible all polygons (triangle or rectangle) are defined counterclockwise.
-For example 
+To detect which side of a polygon is inner or outer all polygons (triangles or rectangles) are defined counterclockwise. These information will be used to decide which polygon is visible and needs to be drawon or not. 
+
+For example the polyon for point P1 to P4
 | rectangle | Order of points |
 | --- | --- |
 | 0 | P4, P3, P2, P1 |
