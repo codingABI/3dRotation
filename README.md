@@ -8,6 +8,7 @@ Simulation https://wokwi.com/projects/329034737849991764
 Dimensions of the 3d object:
 
 ![alt text](/assets/images/Object.svg)
+## Points
 | Point | X | Y | Z |
 | --- | :---: | :---: | :---: |
 | P1 | - 32 | 32 | 32 |
@@ -21,8 +22,29 @@ Dimensions of the 3d object:
 | P9 | 0 | 96 | 0 |
 | P10 | 0 | -96 | 0 |
 
-To define which side of a polygon is inner or outer all polygons (triangles or rectangles) are defined counterclockwise. These information will be used to detect which polygon is visible and needs to be drawon or not. 
+## Inner/Outer
+To define which side of a polygon is inner or outer all polygons (triangles or rectangles) are defined counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn or not. 
 
-For example the order for polygon point P1 to P4 is: P4 -> P3 -> P2 -> P1
+For example the order for polygon point P1 to P4 is: P4, P3, P2, P1
 
 ![alt text](/assets/images/OrderRectangle0.svg)
+
+## Triangles:
+| Nr | Ordered points |
+| --- | --- |
+| 0 | P1, P2, P9 |
+| 1 | P6, P5, P9 |
+| 2 | P2, P6, P9 |
+| 3 | P5, P1, P9 |
+| 4 | P3, P4, P10 |
+| 5 | P4, P8, P10 |
+| 6 | P8, P7, P10 |
+| 7 | P7, P3, P10 |
+
+## Rectangles:
+| Nr | Ordered points |
+| --- | --- |
+| 0 | P4, P3, P2, P1 |
+| 1 | P5, P6, P7, P8 |
+| 2 | P2, P3, P7, P6 |
+| 3 | P4, P1, P5, P8 |
