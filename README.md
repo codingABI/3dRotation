@@ -25,7 +25,7 @@ Dimensions of the 3d object:
 ## Inner/Outer
 To define which side of a polygon is inner or outer all polygons (triangles or rectangles) are defined counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn or not. 
 
-For example the order for polygon point P1 to P4 is: P4, P3, P2, P1
+For example: The order for polygon spanned by points P1 to P4 is **P4, P3, P2, P1**
 
 ![alt text](/assets/images/OrderRectangle0.svg)
 
