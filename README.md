@@ -5,7 +5,7 @@ A rotating 3d object on an arduino UNO with a SSD1306 OLED display.
 
 Simulation https://wokwi.com/projects/329034737849991764
 
-## 3D-Object
+## Used 3D-Object
 ![alt text](/assets/images/Object.svg)
 
 ## Points
