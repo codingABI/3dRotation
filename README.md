@@ -23,9 +23,9 @@ Simulation https://wokwi.com/projects/329034737849991764
 | P10 | 0 | -96 | 0 |
 
 ## Inner/Outer
-To define which side of a polygon is inner or outer all polygons (triangles or rectangles) are defined counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn or not. 
+To define which side of a polygon is inner or outer, all polygons (triangles or rectangles) are arranged counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn or not. 
 
-For example: The order for polygon spanned by points P1 to P4 is **P4, P3, P2, P1**
+For example: The order for the polygon spanned by points P1 to P4 is **P4, P3, P2, P1**
 
 ![alt text](/assets/images/OrderRectangle0.svg)
 
@@ -50,8 +50,8 @@ For example: The order for polygon spanned by points P1 to P4 is **P4, P3, P2, P
 | 3 | P4, P1, P5, P8 |
 
 ## Hide backsides
-To detect which polygon is visible and needs to be drawn or not, the alignment of the points spanning the polygon is used. If the points are aligned in counterclockwise, the polygon will be drawn. If the alignment is counerclockwise, the polygon is invisible and will not be drawn.
+To detect which polygon is visible and needs to be drawn or not, the arrangement of the points spanning the polygon is used. If the points are arranged in counterclockwise, the polygon will be drawn. If the arranged is counerclockwise, the polygon is invisible and will not be drawn.
 
-The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the alignments for the rectangles are shown here: 
+The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the arrangements for the rectangles are marked in the figure: 
 
 ![alt text](/assets/images/DetectBacksides.svg)
