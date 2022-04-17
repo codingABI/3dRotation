@@ -23,9 +23,6 @@ Dimensions of the 3d object:
 
 To define which side of a polygon is inner or outer all polygons (triangles or rectangles) are defined counterclockwise. These information will be used to detect which polygon is visible and needs to be drawon or not. 
 
-For example the polyon for point P1 to P4
-| rectangle | Order of points |
-| --- | --- |
-| 0 | P4, P3, P2, P1 |
+For example the order for polygon point P1 to P4 is: P4 -> P3 -> P2 -> P1
 
 ![alt text](/assets/images/OrderRectangle0.svg)
