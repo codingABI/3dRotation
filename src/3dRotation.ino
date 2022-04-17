@@ -20,7 +20,7 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // SSD1306 I2C 
-#define OLED_RESET     -1 // no eset pin
+#define OLED_RESET     -1 // no reset pin
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define P1 0
