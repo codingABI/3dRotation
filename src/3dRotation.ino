@@ -9,7 +9,7 @@
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
  * 17.04.2022, Fix degree 360 and change rotation based on millis
- * 18.04.2022, Reduce global RAM consumtion by 40 bytes
+ * 18.04.2022, Reduce global RAM consumtion by 62 bytes
  */
 
 #include <SPI.h>
@@ -46,7 +46,7 @@ int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera
 int viewerScale = 60; // 2d scale
 
 // original points x,y,z
-signed char points3d[MAXPOINTS][3] = {
+const PROGMEM signed char points3d[MAXPOINTS][3] = {
   {-32,32,32},
   {32,32,32},
   {32,-32,32},
@@ -160,9 +160,9 @@ void loop(void) {
   cachedCos = cos(radians(degree));
   cachedSin = sin(radians(degree));
   for (byte i=0;i<MAXPOINTS;i++) {
-    pointsTransformed3d[i][X] = (points3d[i][X]*cachedCos - points3d[i][Z]*cachedSin)*cachedCos - points3d[i][Y]*cachedSin + cachedSin * 30;
-    pointsTransformed3d[i][Y] = (points3d[i][X]*cachedCos - points3d[i][Z]*cachedSin)*cachedSin + points3d[i][Y]*cachedCos;
-    pointsTransformed3d[i][Z] = points3d[i][X]*cachedSin + points3d[i][Z]*cachedCos; 
+    pointsTransformed3d[i][X] = ((signed char)pgm_read_byte(&(points3d[i][X]))*cachedCos - (signed char)pgm_read_byte(&(points3d[i][Z]))*cachedSin)*cachedCos - (signed char)pgm_read_byte(&(points3d[i][Y]))*cachedSin + cachedSin * 30;
+    pointsTransformed3d[i][Y] = ((signed char)pgm_read_byte(&(points3d[i][X]))*cachedCos - (signed char)pgm_read_byte(&(points3d[i][Z]))*cachedSin)*cachedSin + (signed char)pgm_read_byte(&(points3d[i][Y]))*cachedCos;
+    pointsTransformed3d[i][Z] = (signed char)pgm_read_byte(&(points3d[i][X]))*cachedSin + (signed char)pgm_read_byte(&(points3d[i][Z]))*cachedCos; 
   }
 
   // draw triangles
