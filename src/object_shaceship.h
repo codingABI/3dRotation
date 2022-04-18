@@ -44,7 +44,7 @@ const PROGMEM signed char points3d[MAXPOINTS][3] = {
 
 // List of arranged points for triangles and rectangles
 #define MAXTRIANGLES 8
-byte triangleList[MAXTRIANGLES][3] {
+const PROGMEM byte triangleList[MAXTRIANGLES][3] {
   {P1, P2, P9 },
   {P6, P5, P9 },
   {P2, P6, P9 },
@@ -56,7 +56,7 @@ byte triangleList[MAXTRIANGLES][3] {
 };
 
 #define MAXRECTS 12 
-byte rectList[MAXRECTS][4] {
+const PROGMEM byte rectList[MAXRECTS][4] {
   { P14, P13, P12, P11 },
   { P14, P4,  P3,  P13 },
   { P13, P3,  P2,  P12 },
