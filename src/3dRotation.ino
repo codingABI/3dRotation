@@ -118,7 +118,7 @@ void loop(void) {
   static int degree = 0;
 
   // rotate every 25ms one degree
-  degree = (millis()/25) % 359;
+  degree = (millis()/25) % 360;
 
   // record start of frame
   startMS = millis();
