@@ -9,13 +9,16 @@
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
  * 17.04.2022, Fix degree 360 and change rotation based on millis
- * 18.04.2022, Reduce global RAM consumtion by 62 bytes
+ * 18.04.2022, Reduce global RAM consumtion by 62 bytes, add alternative 3d object spaceship
  */
 
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+
+#include "object_default.h"
+// #include "object_spaceship.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -24,47 +27,16 @@
 #define OLED_RESET     -1 // no reset pin
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-#define P1 0
-#define P2 1
-#define P3 2
-#define P4 3
-#define P5 4
-#define P6 5
-#define P7 6
-#define P8 7
-#define P9 8
-#define P10 9
 #define X 0
 #define Y 1
 #define Z 2
-#define MAXPOINTS 10
-#define MAXTRIANGLES 8
-#define MAXRECTS 4
 
 // global variables
 int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera 
 int viewerScale = 60; // 2d scale
 
-// original points x,y,z
-const PROGMEM signed char points3d[MAXPOINTS][3] = {
-  {-32,32,32},
-  {32,32,32},
-  {32,-32,32},
-  {-32,-32,32},
-  {-32,32,-32},
-  {32,32,-32},
-  {32,-32,-32},
-  {-32,-32,-32},
-  {0,96,0},
-  {0,-96,0}
-};
-
 // transformed points
 signed char pointsTransformed3d[MAXPOINTS][3];
-
-// List of arranged points for triangles and rectangles
-byte triangleList[MAXTRIANGLES][3];
-byte rectList[MAXRECTS][4];
 
 // projection for x to 2d
 byte x3dTo2D (signed char x, signed char z) {
@@ -121,22 +93,6 @@ void setup(void) {
   // Font settings
   display.setTextColor(SSD1306_WHITE);
   display.setTextSize(1);
-
-  // build mesh from points (all polygons must be defined counterclockwise, otherwise hiding of backsides will not work)
-
-  rectList[0][0] = P4; rectList[0][1] = P3; rectList[0][2] = P2; rectList[0][3] = P1;
-  rectList[1][0] = P5; rectList[1][1] = P6; rectList[1][2] = P7; rectList[1][3] = P8;
-  rectList[2][0] = P2; rectList[2][1] = P3; rectList[2][2] = P7; rectList[2][3] = P6;
-  rectList[3][0] = P4; rectList[3][1] = P1; rectList[3][2] = P5; rectList[3][3] = P8;
-
-  triangleList[0][0] = P1; triangleList[0][1] = P2; triangleList[0][2] = P9;
-  triangleList[1][0] = P6; triangleList[1][1] = P5; triangleList[1][2] = P9;
-  triangleList[2][0] = P2; triangleList[2][1] = P6; triangleList[2][2] = P9;
-  triangleList[3][0] = P5; triangleList[3][1] = P1; triangleList[3][2] = P9;
-  triangleList[4][0] = P3; triangleList[4][1] = P4; triangleList[4][2] = P10;
-  triangleList[5][0] = P4; triangleList[5][1] = P8; triangleList[5][2] = P10;
-  triangleList[6][0] = P8; triangleList[6][1] = P7; triangleList[6][2] = P10;
-  triangleList[7][0] = P7; triangleList[7][1] = P3; triangleList[7][2] = P10;
 }
 
 void loop(void) {
@@ -145,7 +101,6 @@ void loop(void) {
   unsigned long startMS, endMS;
   static unsigned int fps = 0;
   static int degree = 0;
-
 
   // rotate every 25ms one degree
   degree = (millis()/25) % 359;
