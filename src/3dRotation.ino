@@ -9,6 +9,7 @@
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
  * 17.04.2022, Fix degree 360 and change rotation based on millis
+ * 18.04.2022, Reduce global RAM consumtion by 40 bytes
  */
 
 #include <SPI.h>
@@ -61,8 +62,8 @@ signed char points3d[MAXPOINTS][3] = {
 // transformed points
 signed char pointsTransformed3d[MAXPOINTS][3];
 // List of pointers to points
-signed char* triangles3d[MAXTRIANGLES][3];
-signed char* rects3d[MAXRECTS][4];
+byte triangleList[MAXTRIANGLES][3];
+byte rectList[MAXRECTS][4];
 
 // projection for x to 2d
 byte x3dTo2D (signed char x, signed char z) {
@@ -82,11 +83,19 @@ byte y3dTo2D (signed char y, signed char  z) {
 bool isBackfaceTriangle(int i) {
   int Ax, Ay, Bx, By;
 
-  Ax = x3dTo2D(triangles3d[i][0][X],triangles3d[i][0][Z]) - x3dTo2D(triangles3d[i][1][X],triangles3d[i][1][Z]);
-  Ay = y3dTo2D(triangles3d[i][0][Y],triangles3d[i][0][Z]) - y3dTo2D(triangles3d[i][1][Y],triangles3d[i][1][Z]);
+  Ax = x3dTo2D(pointsTransformed3d[triangleList[i][0]][X],
+    pointsTransformed3d[triangleList[i][0]][Z]) - x3dTo2D(pointsTransformed3d[triangleList[i][1]][X],
+    pointsTransformed3d[triangleList[i][1]][Z]);
+  Ay = y3dTo2D(pointsTransformed3d[triangleList[i][0]][Y],
+    pointsTransformed3d[triangleList[i][0]][Z]) - y3dTo2D(pointsTransformed3d[triangleList[i][1]][Y],
+    pointsTransformed3d[triangleList[i][1]][Z]);
 
-  Bx = x3dTo2D(triangles3d[i][0][X],triangles3d[i][0][Z]) - x3dTo2D(triangles3d[i][2][X],triangles3d[i][2][Z]);
-  By = y3dTo2D(triangles3d[i][0][Y],triangles3d[i][0][Z]) - y3dTo2D(triangles3d[i][2][Y],triangles3d[i][2][Z]);
+  Bx = x3dTo2D(pointsTransformed3d[triangleList[i][0]][X],
+    pointsTransformed3d[triangleList[i][0]][Z]) - x3dTo2D(pointsTransformed3d[triangleList[i][2]][X],
+    pointsTransformed3d[triangleList[i][2]][Z]);
+  By = y3dTo2D(pointsTransformed3d[triangleList[i][0]][Y],
+    pointsTransformed3d[triangleList[i][0]][Z]) - y3dTo2D(pointsTransformed3d[triangleList[i][2]][Y],
+    pointsTransformed3d[triangleList[i][2]][Z]);
 
   return ((Ax*By - Ay*Bx) < 0);  
 }
@@ -94,13 +103,10 @@ bool isBackfaceTriangle(int i) {
 // detect backsides for rectangles (clockwise = backside, based on idea from https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order)
 bool isBackfaceRect(int i) {
   long sum=0;
-  for (byte j=0;j<3;j++) {
-    sum+=(x3dTo2D(rects3d[i][j+1][X],rects3d[i][j+1][Z])-x3dTo2D(rects3d[i][j][X],rects3d[i][j][Z]))
-      *(y3dTo2D(rects3d[i][j+1][Y],rects3d[i][j+1][Z])+y3dTo2D(rects3d[i][j][Y],rects3d[i][j][Z]));
+  for (byte j=0;j<4;j++) {
+    sum+=(x3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][X],pointsTransformed3d[rectList[i][(j+1)%4]][Z])-x3dTo2D(pointsTransformed3d[rectList[i][j]][X],pointsTransformed3d[rectList[i][j]][Z]))*
+      (y3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][Y],pointsTransformed3d[rectList[i][(j+1)%4]][Z])+y3dTo2D(pointsTransformed3d[rectList[i][j]][Y],pointsTransformed3d[rectList[i][j]][Z]));
   }
-  sum+=(x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z])-x3dTo2D(rects3d[i][3][X],rects3d[i][3][Z]))     
-    *(y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z])+y3dTo2D(rects3d[i][3][Y],rects3d[i][3][Z]));
-
   return (sum >= 0);
 }
 
@@ -117,26 +123,26 @@ void setup(void) {
 
   // build mesh from points (all polygons must be defined counterclockwise, otherwise hiding of backsides will not work)
 
-  rects3d[0][0] = pointsTransformed3d[P4]; rects3d[0][1] = pointsTransformed3d[P3]; rects3d[0][2] = pointsTransformed3d[P2]; rects3d[0][3] = pointsTransformed3d[P1];
-  rects3d[1][0] = pointsTransformed3d[P5]; rects3d[1][1] = pointsTransformed3d[P6]; rects3d[1][2] = pointsTransformed3d[P7]; rects3d[1][3] = pointsTransformed3d[P8];
-  rects3d[2][0] = pointsTransformed3d[P2]; rects3d[2][1] = pointsTransformed3d[P3]; rects3d[2][2] = pointsTransformed3d[P7]; rects3d[2][3] = pointsTransformed3d[P6];
-  rects3d[3][0] = pointsTransformed3d[P4]; rects3d[3][1] = pointsTransformed3d[P1]; rects3d[3][2] = pointsTransformed3d[P5]; rects3d[3][3] = pointsTransformed3d[P8];
+  rectList[0][0] = P4; rectList[0][1] = P3; rectList[0][2] = P2; rectList[0][3] = P1;
+  rectList[1][0] = P5; rectList[1][1] = P6; rectList[1][2] = P7; rectList[1][3] = P8;
+  rectList[2][0] = P2; rectList[2][1] = P3; rectList[2][2] = P7; rectList[2][3] = P6;
+  rectList[3][0] = P4; rectList[3][1] = P1; rectList[3][2] = P5; rectList[3][3] = P8;
 
-  triangles3d[0][0] = pointsTransformed3d[P1]; triangles3d[0][1] = pointsTransformed3d[P2]; triangles3d[0][2] = pointsTransformed3d[P9];
-  triangles3d[1][0] = pointsTransformed3d[P6]; triangles3d[1][1] = pointsTransformed3d[P5]; triangles3d[1][2] = pointsTransformed3d[P9];
-  triangles3d[2][0] = pointsTransformed3d[P2]; triangles3d[2][1] = pointsTransformed3d[P6]; triangles3d[2][2] = pointsTransformed3d[P9];
-  triangles3d[3][0] = pointsTransformed3d[P5]; triangles3d[3][1] = pointsTransformed3d[P1]; triangles3d[3][2] = pointsTransformed3d[P9];
-  triangles3d[4][0] = pointsTransformed3d[P3]; triangles3d[4][1] = pointsTransformed3d[P4]; triangles3d[4][2] = pointsTransformed3d[P10];
-  triangles3d[5][0] = pointsTransformed3d[P4]; triangles3d[5][1] = pointsTransformed3d[P8]; triangles3d[5][2] = pointsTransformed3d[P10];
-  triangles3d[6][0] = pointsTransformed3d[P8]; triangles3d[6][1] = pointsTransformed3d[P7]; triangles3d[6][2] = pointsTransformed3d[P10];
-  triangles3d[7][0] = pointsTransformed3d[P7]; triangles3d[7][1] = pointsTransformed3d[P3]; triangles3d[7][2] = pointsTransformed3d[P10];
+  triangleList[0][0] = P1; triangleList[0][1] = P2; triangleList[0][2] = P9;
+  triangleList[1][0] = P6; triangleList[1][1] = P5; triangleList[1][2] = P9;
+  triangleList[2][0] = P2; triangleList[2][1] = P6; triangleList[2][2] = P9;
+  triangleList[3][0] = P5; triangleList[3][1] = P1; triangleList[3][2] = P9;
+  triangleList[4][0] = P3; triangleList[4][1] = P4; triangleList[4][2] = P10;
+  triangleList[5][0] = P4; triangleList[5][1] = P8; triangleList[5][2] = P10;
+  triangleList[6][0] = P8; triangleList[6][1] = P7; triangleList[6][2] = P10;
+  triangleList[7][0] = P7; triangleList[7][1] = P3; triangleList[7][2] = P10;
 }
 
 void loop(void) {
   char strFPS[8];
   float cachedCos, cachedSin;
   unsigned long startMS, endMS;
-  static int fps = 0;
+  static unsigned int fps = 0;
   static int degree = 0;
 
 
@@ -161,28 +167,24 @@ void loop(void) {
   // draw triangles
   for (byte i=0;i<MAXTRIANGLES;i++) {
     if (!isBackfaceTriangle(i)) { // only front sides  
-      display.drawTriangle(x3dTo2D(triangles3d[i][0][X],triangles3d[i][0][Z]),y3dTo2D(triangles3d[i][0][Y],triangles3d[i][0][Z]),
-        x3dTo2D(triangles3d[i][1][X],triangles3d[i][1][Z]),y3dTo2D(triangles3d[i][1][Y],triangles3d[i][1][Z]),
-        x3dTo2D(triangles3d[i][2][X],triangles3d[i][2][Z]),y3dTo2D(triangles3d[i][2][Y],triangles3d[i][2][Z]),SSD1306_WHITE);
+      display.drawTriangle(x3dTo2D(pointsTransformed3d[triangleList[i][0]][X],pointsTransformed3d[triangleList[i][0]][Z]),y3dTo2D(pointsTransformed3d[triangleList[i][0]][Y],pointsTransformed3d[triangleList[i][0]][Z]),
+        x3dTo2D(pointsTransformed3d[triangleList[i][1]][X],pointsTransformed3d[triangleList[i][1]][Z]),y3dTo2D(pointsTransformed3d[triangleList[i][1]][Y],pointsTransformed3d[triangleList[i][1]][Z]),
+        x3dTo2D(pointsTransformed3d[triangleList[i][2]][X],pointsTransformed3d[triangleList[i][2]][Z]),y3dTo2D(pointsTransformed3d[triangleList[i][2]][Y],pointsTransformed3d[triangleList[i][2]][Z]),SSD1306_WHITE);
     }
   }
 
   // draw rectangles
   for (byte i=0;i<MAXRECTS;i++) {
-    if (!isBackfaceRect(i)) { // only front sides 
-      display.drawLine(x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z]),y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z]),
-        x3dTo2D(rects3d[i][1][X],rects3d[i][1][Z]),y3dTo2D(rects3d[i][1][Y],rects3d[i][1][Z]), SSD1306_WHITE);
-      display.drawLine(x3dTo2D(rects3d[i][1][X],rects3d[i][1][Z]),y3dTo2D(rects3d[i][1][Y],rects3d[i][1][Z]),
-        x3dTo2D(rects3d[i][2][X],rects3d[i][2][Z]),y3dTo2D(rects3d[i][2][Y],rects3d[i][2][Z]), SSD1306_WHITE);
-      display.drawLine(x3dTo2D(rects3d[i][2][X],rects3d[i][2][Z]),y3dTo2D(rects3d[i][2][Y],rects3d[i][2][Z]),
-        x3dTo2D(rects3d[i][3][X],rects3d[i][3][Z]),y3dTo2D(rects3d[i][3][Y],rects3d[i][3][Z]),SSD1306_WHITE);
-      display.drawLine(x3dTo2D(rects3d[i][3][X],rects3d[i][3][Z]),y3dTo2D(rects3d[i][3][Y],rects3d[i][3][Z]),
-        x3dTo2D(rects3d[i][0][X],rects3d[i][0][Z]),y3dTo2D(rects3d[i][0][Y],rects3d[i][0][Z]), SSD1306_WHITE);
+    if (!isBackfaceRect(i)) { // only front sides     
+      for (byte j=0;j<4;j++) {
+        display.drawLine(x3dTo2D(pointsTransformed3d[rectList[i][j]][X],pointsTransformed3d[rectList[i][j]][Z]),y3dTo2D(pointsTransformed3d[rectList[i][j]][Y],pointsTransformed3d[rectList[i][j]][Z]),
+          x3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][X],pointsTransformed3d[rectList[i][(j+1)%4]][Z]),y3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][Y],pointsTransformed3d[rectList[i][(j+1)%4]][Z]), SSD1306_WHITE);
+      }
     }
   }
 
   // show frames per second
-  sprintf(strFPS,"fps %d",fps);
+  if (fps < 1000) sprintf(strFPS,"fps %d",fps); else strcpy(strFPS,"fps inv");
   display.setCursor(0,55);
   display.println(strFPS);
 
