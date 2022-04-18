@@ -1,4 +1,4 @@
-// ball
+// icosahedron
 
 // original points x,y,z
 #define P1 0
