@@ -18,7 +18,7 @@
 #include <Adafruit_SSD1306.h>
 
 #include "object_default.h"
-// #include "object_spaceship.h"
+// #include "object_spaceship.h" // alternative 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
