@@ -61,7 +61,8 @@ signed char points3d[MAXPOINTS][3] = {
 
 // transformed points
 signed char pointsTransformed3d[MAXPOINTS][3];
-// List of pointers to points
+
+// List of arranged points for triangles and rectangles
 byte triangleList[MAXTRIANGLES][3];
 byte rectList[MAXRECTS][4];
 
