@@ -34,7 +34,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define Y 1
 #define Z 2
 
-#define DRAWONLYLINES // faster, but can causes artifacts on complex objects 
+#define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. Comment out this line, if you want to fill polygons 
 
 // global variables
 int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera 
@@ -86,10 +86,14 @@ bool isBackfaceTriangle(int i) {
 bool isBackfaceRect(int i) {
   long sum=0;
   for (byte j=0;j<4;j++) {
-    sum+=(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])-
-      x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]))*
-      (y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])+
-      y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]));
+    sum+=(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],
+      pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])-
+      x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],
+      pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]))*
+      (y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],
+      pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])+
+      y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],
+      pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]));
   }
   return (sum >= 0);
 }
@@ -138,15 +142,25 @@ void loop(void) {
 
       #ifndef DRAWONLYLINES
       // fill with black/delete area
-      display.fillTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),SSD1306_BLACK);
+      display.fillTriangle(
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),
+        SSD1306_BLACK);
       #endif
 
       // draw outer border
-      display.drawTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),SSD1306_WHITE);
+      display.drawTriangle(
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),
+        SSD1306_WHITE);
     }
   }
 
@@ -156,18 +170,32 @@ void loop(void) {
 
       #ifndef DRAWONLYLINES
       // fill with black/delete area
-      display.fillTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),SSD1306_BLACK);
-      display.fillTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Z]),
-        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),SSD1306_BLACK);
+      display.fillTriangle(
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),
+        SSD1306_BLACK);
+      display.fillTriangle(
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),
+        y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),
+        SSD1306_BLACK);
       #endif
 
       // draw outer border
       for (byte j=0;j<4;j++) {
-        display.drawLine(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]),
-          x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z]), SSD1306_WHITE);
+        display.drawLine(
+          x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]),
+          y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]),
+          x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z]),
+          y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z]), 
+          SSD1306_WHITE);
       }
     }
   }
