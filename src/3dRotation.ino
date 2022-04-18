@@ -9,7 +9,8 @@
  * 15.04.2022, Initial version
  * 16.04.2022, Improve isBackfaceRect
  * 17.04.2022, Fix degree 360 and change rotation based on millis
- * 18.04.2022, Reduce global RAM consumtion by 62 bytes, add alternative 3d object spaceship
+ * 18.04.2022, Reduce global RAM consumtion by using PROGMEM for the 3d object
+ * 18.04.2022, Add three alternative 3d objects
  */
 
 #include <SPI.h>
@@ -18,7 +19,9 @@
 #include <Adafruit_SSD1306.h>
 
 #include "object_default.h"
-// #include "object_spaceship.h" // alternative 3d model
+//#include "object_spaceship.h" // alternative 3d model
+//#include "object_cubes.h" // another alternative 3d model
+//#include "object_ball.h" // just another alternative 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -30,6 +33,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define X 0
 #define Y 1
 #define Z 2
+
+#define DRAWONLYLINES // faster, but can causes artifacts on complex objects 
 
 // global variables
 int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera 
@@ -56,19 +61,23 @@ byte y3dTo2D (signed char y, signed char  z) {
 bool isBackfaceTriangle(int i) {
   int Ax, Ay, Bx, By;
 
-  Ax = x3dTo2D(pointsTransformed3d[triangleList[i][0]][X],
-    pointsTransformed3d[triangleList[i][0]][Z]) - x3dTo2D(pointsTransformed3d[triangleList[i][1]][X],
-    pointsTransformed3d[triangleList[i][1]][Z]);
-  Ay = y3dTo2D(pointsTransformed3d[triangleList[i][0]][Y],
-    pointsTransformed3d[triangleList[i][0]][Z]) - y3dTo2D(pointsTransformed3d[triangleList[i][1]][Y],
-    pointsTransformed3d[triangleList[i][1]][Z]);
+  Ax = x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X], 
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]) - 
+    x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]);
+  Ay = y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y], 
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]) - 
+    y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]);
 
-  Bx = x3dTo2D(pointsTransformed3d[triangleList[i][0]][X],
-    pointsTransformed3d[triangleList[i][0]][Z]) - x3dTo2D(pointsTransformed3d[triangleList[i][2]][X],
-    pointsTransformed3d[triangleList[i][2]][Z]);
-  By = y3dTo2D(pointsTransformed3d[triangleList[i][0]][Y],
-    pointsTransformed3d[triangleList[i][0]][Z]) - y3dTo2D(pointsTransformed3d[triangleList[i][2]][Y],
-    pointsTransformed3d[triangleList[i][2]][Z]);
+  Bx = x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]) - 
+    x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]);
+  By = y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]) - 
+    y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],
+    pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]);
 
   return ((Ax*By - Ay*Bx) < 0);  
 }
@@ -77,8 +86,10 @@ bool isBackfaceTriangle(int i) {
 bool isBackfaceRect(int i) {
   long sum=0;
   for (byte j=0;j<4;j++) {
-    sum+=(x3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][X],pointsTransformed3d[rectList[i][(j+1)%4]][Z])-x3dTo2D(pointsTransformed3d[rectList[i][j]][X],pointsTransformed3d[rectList[i][j]][Z]))*
-      (y3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][Y],pointsTransformed3d[rectList[i][(j+1)%4]][Z])+y3dTo2D(pointsTransformed3d[rectList[i][j]][Y],pointsTransformed3d[rectList[i][j]][Z]));
+    sum+=(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])-
+      x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]))*
+      (y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])+
+      y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]));
   }
   return (sum >= 0);
 }
@@ -124,18 +135,39 @@ void loop(void) {
   // draw triangles
   for (byte i=0;i<MAXTRIANGLES;i++) {
     if (!isBackfaceTriangle(i)) { // only front sides  
-      display.drawTriangle(x3dTo2D(pointsTransformed3d[triangleList[i][0]][X],pointsTransformed3d[triangleList[i][0]][Z]),y3dTo2D(pointsTransformed3d[triangleList[i][0]][Y],pointsTransformed3d[triangleList[i][0]][Z]),
-        x3dTo2D(pointsTransformed3d[triangleList[i][1]][X],pointsTransformed3d[triangleList[i][1]][Z]),y3dTo2D(pointsTransformed3d[triangleList[i][1]][Y],pointsTransformed3d[triangleList[i][1]][Z]),
-        x3dTo2D(pointsTransformed3d[triangleList[i][2]][X],pointsTransformed3d[triangleList[i][2]][Z]),y3dTo2D(pointsTransformed3d[triangleList[i][2]][Y],pointsTransformed3d[triangleList[i][2]][Z]),SSD1306_WHITE);
+
+      #ifndef DRAWONLYLINES
+      // fill with black/delete area
+      display.fillTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),SSD1306_BLACK);
+      #endif
+
+      // draw outer border
+      display.drawTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][1]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[i][2]))][Z]),SSD1306_WHITE);
     }
   }
 
   // draw rectangles
   for (byte i=0;i<MAXRECTS;i++) {
-    if (!isBackfaceRect(i)) { // only front sides     
+    if (!isBackfaceRect(i)) { // only front sides
+
+      #ifndef DRAWONLYLINES
+      // fill with black/delete area
+      display.fillTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][1]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),SSD1306_BLACK);
+      display.fillTriangle(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][0]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][3]))][Z]),
+        x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][2]))][Z]),SSD1306_BLACK);
+      #endif
+
+      // draw outer border
       for (byte j=0;j<4;j++) {
-        display.drawLine(x3dTo2D(pointsTransformed3d[rectList[i][j]][X],pointsTransformed3d[rectList[i][j]][Z]),y3dTo2D(pointsTransformed3d[rectList[i][j]][Y],pointsTransformed3d[rectList[i][j]][Z]),
-          x3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][X],pointsTransformed3d[rectList[i][(j+1)%4]][Z]),y3dTo2D(pointsTransformed3d[rectList[i][(j+1)%4]][Y],pointsTransformed3d[rectList[i][(j+1)%4]][Z]), SSD1306_WHITE);
+        display.drawLine(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]),
+          x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z]),y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z]), SSD1306_WHITE);
       }
     }
   }
