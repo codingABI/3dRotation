@@ -25,7 +25,7 @@
 //#include "object_spaceship.h" // alternative 3d model
 //#include "object_cubes.h" // another alternative 3d model
 //#include "object_ball.h" // just another alternative 3d model
-//#include "object_complex.h" // alternative, overlapping 3d model. dont forget to comment out #define DRAWONLYLINES
+//#include "object_complex.h" // alternative, overlapping 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
