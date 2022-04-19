@@ -114,7 +114,7 @@ signed char getMaxZ(byte type, byte i) {
     case TYPE_RECT:
       for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z] > maxZ) maxZ = pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z];
     break;
- }  
+  }  
 
   return  maxZ;
 }
@@ -130,7 +130,7 @@ signed char getMinZ(byte type, byte i) {
     case TYPE_RECT:
       for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z] < minZ) minZ = pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z];
     break;
- }  
+  }  
 
   return  minZ;
 }
