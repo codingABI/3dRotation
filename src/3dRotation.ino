@@ -11,7 +11,7 @@
  * 17.04.2022, Fix degree 360 and change rotation based on millis
  * 18.04.2022, Reduce global RAM consumtion by using PROGMEM for the 3d object
  * 18.04.2022, Add three alternative 3d objects
- * 19.04.2022, Add ordered display list to support overlapping objects
+ * 19.04.2022, Add ordered display list to support overlapping objects (not perfect due perspective, but usable and I have currently no better solution without z-buffer)
  */
 
 #include <SPI.h>
@@ -21,11 +21,11 @@
 
 #define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. #undef in object_*.h file, if you want to fill polygons 
 
-#include "object_default.h"
+//#include "object_default.h"
 //#include "object_spaceship.h" // alternative 3d model
 //#include "object_cubes.h" // another alternative 3d model
 //#include "object_ball.h" // just another alternative 3d model
-//#include "object_complex.h" // alternative, overlapping 3d model
+#include "object_complex.h" // alternative, overlapping 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
