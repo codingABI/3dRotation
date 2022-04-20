@@ -56,5 +56,5 @@ The following figure shows an example (Green = counterclockwise => Visible, fron
 
 ![alt text](/assets/images/DetectBacksides.svg)
 
-## overlapping object
-When multiple objects overlap or an object overlaps itself, the order in which the faces are rendered plays an important role. Since only 2K RAM is available on an AT-MEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all surfaces are sorted by their z-values before rendering and displayed according to the z-values. Glitches are possible due to large surfaces and perspective distortion.
+## Overlapping objects
+When multiple objects overlap or an object overlaps itself, the order in which the faces are rendered plays an important role. Since only 2KByte RAM is available on an AT-MEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all surfaces are sorted by their z-values before rendering and displayed according to the z-values. Glitches are possible due to large surfaces and perspective distortion.
