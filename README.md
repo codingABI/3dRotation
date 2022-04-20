@@ -23,14 +23,14 @@ Simulation https://wokwi.com/projects/329034737849991764
 | P10 | 0 | -96 | 0 |
 
 ## Inner/Outer
-To define which side of a polygon is inner or outer, all polygons (triangles or rectangles) are arranged counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn on screen or not. 
+To define which side of a polygon is inner or outer, all polygons (triangles or rectangles) are orderd counterclockwise. These information will be used to detect which polygon is visible and needs to be drawn on screen or not. 
 
-For example: The arrangement for the polygon, spanned by points P1 to P4, is **P4, P3, P2, P1**
+For example: The order for the polygon, spanned by points P1 to P4, is **P4, P3, P2, P1**
 
 ![alt text](/assets/images/OrderRectangle0.svg)
 
 ## Triangles:
-| Nr | Arranged points |
+| Nr | Ordered points |
 | --- | --- |
 | 0 | P1, P2, P9 |
 | 1 | P6, P5, P9 |
@@ -42,7 +42,7 @@ For example: The arrangement for the polygon, spanned by points P1 to P4, is **P
 | 7 | P7, P3, P10 |
 
 ## Rectangles:
-| Nr | Arranged points |
+| Nr | Ordered points |
 | --- | --- |
 | 0 | P4, P3, P2, P1 |
 | 1 | P5, P6, P7, P8 |
@@ -50,8 +50,11 @@ For example: The arrangement for the polygon, spanned by points P1 to P4, is **P
 | 3 | P4, P1, P5, P8 |
 
 ## Hide backsides
-To detect which polygon is visible and needs to be drawn on screen or not, the arrangement of the points spanning the polygon is used. If the points are arranged in counterclockwise, the polygon will be drawn. If the arranged is clockwise, the polygon is invisible and will not be drawn.
+To detect which polygon is visible and needs to be drawn on screen or not, the order of the points spanning the polygon is used. If the points are orderd in counterclockwise, the polygon will be drawn. If the order is clockwise, the polygon is invisible and will not be drawn.
 
-The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the arrangements for the rectangles are marked in the figure: 
+The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the orders for the rectangles are marked in the figure: 
 
 ![alt text](/assets/images/DetectBacksides.svg)
+
+## overlapping object
+When multiple objects overlap or an object overlaps itself, the order in which the faces are rendered plays an important role. Since only 2K RAM is available on an AT-MEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all surfaces are sorted by their z-values before rendering and displayed according to the z-values. Glitches are possible due to large surfaces and perspective distortion.
