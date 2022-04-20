@@ -169,7 +169,7 @@ void loop(void) {
   float cachedCos, cachedSin;
   unsigned long startMS, endMS;
   static unsigned int fps = 0;
-  static int degree = 0;
+  int degree;
 
   // rotate every 25ms one degree
   degree = (millis()/25) % 360;
