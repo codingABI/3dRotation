@@ -57,4 +57,4 @@ The following figure shows an example (Green = counterclockwise => Visible, fron
 ![alt text](/assets/images/DetectBacksides.svg)
 
 ## Overlapping objects
-When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all polygons are sorted by their z-values and displayed according to the z-values. Glitches are possible due to large surfaces and perspective distortion.
+When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all polygons are sorted by their z-values and displayed according to the z-values. Glitches are possible due to large polygons and perspective distortion.
