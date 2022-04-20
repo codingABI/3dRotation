@@ -23,11 +23,11 @@
 #define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. #undef in object_*.h file, if you want to fill polygons 
 
 // Include always only one object_*.h-File at at time
-//#include "object_default.h" // default 3d object
+#include "object_default.h" // default 3d object
 //#include "object_spaceship.h" // alternative 3d model
 //#include "object_cubes.h" // another alternative 3d model
-//#include "object_ball.h" // just another alternative 3d model
-#include "object_complex.h" // overlapping 3d model
+//#include "object_icosahedron.h" // just another alternative 3d model
+//#include "object_complex.h" // overlapping 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
