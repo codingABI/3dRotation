@@ -52,7 +52,7 @@ For example: The order for the polygon, spanned by points P1 to P4, is **P4, P3,
 ## Hide backsides
 To detect which polygon is visible and needs to be drawn on screen or not, the order of the points spanning the polygon is used. If the points are orderd in counterclockwise, the polygon will be drawn. If the order is clockwise, the polygon is invisible and will not be drawn.
 
-The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the orders for the rectangles are marked in the figure: 
+The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the orders for the quadrangles are marked in the figure: 
 
 ![alt text](/assets/images/DetectBacksides.svg)
 
