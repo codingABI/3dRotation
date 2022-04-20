@@ -197,7 +197,7 @@ void loop(void) {
     displayList[i].minZ = getMinZ(TYPE_TRIANGLE,i);
     displayList[i].maxZ = getMaxZ(TYPE_TRIANGLE,i);
   }
-  // add rectangles to display list
+  // add quadrangles to display list
   for (byte i=0;i<MAXQUADRANGLES;i++) {
     displayList[MAXTRIANGLES+i].type = TYPE_QUADRANGLE;
     displayList[MAXTRIANGLES+i].nbr = i;
