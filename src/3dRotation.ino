@@ -11,7 +11,8 @@
  * 17.04.2022, Fix degree 360 and change rotation based on millis
  * 18.04.2022, Reduce global RAM consumtion by using PROGMEM for the 3d object
  * 18.04.2022, Add three alternative 3d objects
- * 19.04.2022, Add ordered display list to support overlapping objects (not perfect due perspective, but usable and I have currently no better solution without z-buffer)
+ * 19.04.2022, Add ordered display list to support overlapping objects (still glitches due perspective and large polygons, but usable and I have currently no better solution without z-buffer)
+ * 20.04.2022, Improve object_complex.h (more smaller triangles, less glitches when overlapping)
  */
 
 #include <SPI.h>
@@ -21,11 +22,12 @@
 
 #define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. #undef in object_*.h file, if you want to fill polygons 
 
-//#include "object_default.h"
+// Include always only one object_*.h-File at at time
+//#include "object_default.h" // default 3d object
 //#include "object_spaceship.h" // alternative 3d model
 //#include "object_cubes.h" // another alternative 3d model
 //#include "object_ball.h" // just another alternative 3d model
-#include "object_complex.h" // alternative, overlapping 3d model
+#include "object_complex.h" // overlapping 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -39,10 +41,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define Z 2
 
 #define TYPE_TRIANGLE 2
-#define TYPE_RECT 1
+#define TYPE_RECTANGLE 1
 
 // global variables
-int viewerDistance = -200; // z-distance between 0/0/0-point and viewer/camera 
+int viewerDistance = 200; // z-distance between 0/0/0-point and viewer/camera 
 int viewerScale = 60; // 2d scale
 
 // transformed points
@@ -55,7 +57,7 @@ struct displayListEntry {
   signed char minZ;
   signed char maxZ;
 };
-displayListEntry displayList[MAXTRIANGLES+MAXRECTS];
+displayListEntry displayList[MAXTRIANGLES+MAXRECTANGLES];
 
 // projection for x to 2d
 byte x3dTo2D (signed char x, signed char z) {
@@ -67,7 +69,7 @@ byte x3dTo2D (signed char x, signed char z) {
 // projection for y to 2d
 byte y3dTo2D (signed char y, signed char  z) {
     if (z+viewerDistance != 0) {
-      return (float) 32 + viewerScale * y/(z+viewerDistance);
+      return (float) 32 - viewerScale * y/(z+viewerDistance);
     } else return 0;
 }
 
@@ -87,16 +89,16 @@ bool isBackface(byte type, int i) {
           pointsTransformed3d[pgm_read_byte(&(triangleList[i][j]))][Z]));
       }
     break;
-    case TYPE_RECT:
+    case TYPE_RECTANGLE:
       for (byte j=0;j<4;j++) {
-        sum+=(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][X],
-          pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])-
-          x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][X],
-          pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]))*
-          (y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Y],
-          pointsTransformed3d[pgm_read_byte(&(rectList[i][(j+1)%4]))][Z])+
-          y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Y],
-          pointsTransformed3d[pgm_read_byte(&(rectList[i][j]))][Z]));
+        sum+=(x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[i][(j+1)%4]))][X],
+          pointsTransformed3d[pgm_read_byte(&(rectangleList[i][(j+1)%4]))][Z])-
+          x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[i][j]))][X],
+          pointsTransformed3d[pgm_read_byte(&(rectangleList[i][j]))][Z]))*
+          (y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[i][(j+1)%4]))][Y],
+          pointsTransformed3d[pgm_read_byte(&(rectangleList[i][(j+1)%4]))][Z])+
+          y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[i][j]))][Y],
+          pointsTransformed3d[pgm_read_byte(&(rectangleList[i][j]))][Z]));
       }
     break;
   }
@@ -111,8 +113,8 @@ signed char getMaxZ(byte type, byte i) {
     case TYPE_TRIANGLE:
       for (byte j=0;j<3;j++) if (pointsTransformed3d[pgm_read_byte(&(triangleList[displayList[i].nbr][j]))][Z] > maxZ) maxZ = pointsTransformed3d[pgm_read_byte(&(triangleList[displayList[i].nbr][j]))][Z];
     break;
-    case TYPE_RECT:
-      for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z] > maxZ) maxZ = pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z];
+    case TYPE_RECTANGLE:
+      for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Z] > maxZ) maxZ = pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Z];
     break;
   }  
 
@@ -127,8 +129,8 @@ signed char getMinZ(byte type, byte i) {
     case TYPE_TRIANGLE:
       for (byte j=0;j<3;j++) if (pointsTransformed3d[pgm_read_byte(&(triangleList[displayList[i].nbr][j]))][Z] < minZ) minZ = pointsTransformed3d[pgm_read_byte(&(triangleList[displayList[i].nbr][j]))][Z];
     break;
-    case TYPE_RECT:
-      for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z] < minZ) minZ = pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z];
+    case TYPE_RECTANGLE:
+      for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Z] < minZ) minZ = pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Z];
     break;
   }  
 
@@ -139,9 +141,9 @@ signed char getMinZ(byte type, byte i) {
 void sortDisplayList() {
   displayListEntry tempEntry;
   // bouble sort
-  for (byte i=0;i<MAXTRIANGLES+MAXRECTS - 1;i++) {
-    for (byte j=0;j<MAXTRIANGLES+MAXRECTS-i-1;j++) {
-      if ((displayList[j].maxZ > displayList[j+1].maxZ) || ((displayList[j].maxZ == displayList[j+1].maxZ) && (displayList[j].minZ > displayList[j+1].minZ))) {
+  for (byte i=0;i<MAXTRIANGLES+MAXRECTANGLES - 1;i++) {
+    for (byte j=0;j<MAXTRIANGLES+MAXRECTANGLES-i-1;j++) {
+      if ((displayList[j].minZ < displayList[j+1].minZ) || ((displayList[j].minZ == displayList[j+1].minZ) && (displayList[j].maxZ < displayList[j+1].maxZ))) {
         tempEntry = displayList[j];
         displayList[j] = displayList[j+1];
         displayList[j+1] = tempEntry;
@@ -149,7 +151,6 @@ void sortDisplayList() {
     }
   }
 }
-
 
 void setup(void) {
   Serial.begin(9600);
@@ -197,18 +198,18 @@ void loop(void) {
     displayList[i].maxZ = getMaxZ(TYPE_TRIANGLE,i);
   }
   // add rectangles to display list
-  for (byte i=0;i<MAXRECTS;i++) {
-    displayList[MAXTRIANGLES+i].type = TYPE_RECT;
+  for (byte i=0;i<MAXRECTANGLES;i++) {
+    displayList[MAXTRIANGLES+i].type = TYPE_RECTANGLE;
     displayList[MAXTRIANGLES+i].nbr = i;
-    displayList[MAXTRIANGLES+i].minZ = getMinZ(TYPE_RECT,i);
-    displayList[MAXTRIANGLES+i].maxZ = getMaxZ(TYPE_RECT,i);
+    displayList[MAXTRIANGLES+i].minZ = getMinZ(TYPE_RECTANGLE,i);
+    displayList[MAXTRIANGLES+i].maxZ = getMaxZ(TYPE_RECTANGLE,i);
   }
 
   // sort display list by z-value
   sortDisplayList();
 
   // draw display list
-  for (byte i=0;i<MAXTRIANGLES+MAXRECTS;i++) {
+  for (byte i=0;i<MAXTRIANGLES+MAXRECTANGLES;i++) {
     if (!isBackface(displayList[i].type,displayList[i].nbr)) { // only front sides  
       switch(displayList[i].type) {
         case TYPE_TRIANGLE: // draw triangle
@@ -233,33 +234,33 @@ void loop(void) {
             y3dTo2D(pointsTransformed3d[pgm_read_byte(&(triangleList[displayList[i].nbr][2]))][Y],pointsTransformed3d[pgm_read_byte(&(triangleList[displayList[i].nbr][2]))][Z]),
             SSD1306_WHITE);
         break;
-        case TYPE_RECT : // draw rectangle
+        case TYPE_RECTANGLE : // draw rectangle
           #ifndef DRAWONLYLINES
           // fill with black/delete area
           display.fillTriangle(
-            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][Z]),
-            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][Z]),
-            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][1]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][1]))][Z]),
-            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][1]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][1]))][Z]),
-            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][Z]),
-            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][Z]),
+            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][Z]),
+            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][Z]),
+            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][1]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][1]))][Z]),
+            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][1]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][1]))][Z]),
+            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][Z]),
+            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][Z]),
             SSD1306_BLACK);
           display.fillTriangle(
-            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][Z]),
-            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][0]))][Z]),
-            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][3]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][3]))][Z]),
-            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][3]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][3]))][Z]),
-            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][Z]),
-            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][2]))][Z]),
+            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][Z]),
+            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][0]))][Z]),
+            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][3]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][3]))][Z]),
+            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][3]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][3]))][Z]),
+            x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][Z]),
+            y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][2]))][Z]),
             SSD1306_BLACK);
           #endif
           // draw outer border
           for (byte j=0;j<4;j++) {
             display.drawLine(
-              x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z]),
-              y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][j]))][Z]),
-              x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][(j+1)%4]))][Z]),
-              y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectList[displayList[i].nbr][(j+1)%4]))][Z]), 
+              x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Z]),
+              y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][j]))][Z]),
+              x3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][(j+1)%4]))][X],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][(j+1)%4]))][Z]),
+              y3dTo2D(pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][(j+1)%4]))][Y],pointsTransformed3d[pgm_read_byte(&(rectangleList[displayList[i].nbr][(j+1)%4]))][Z]), 
               SSD1306_WHITE);
           }
         break;
