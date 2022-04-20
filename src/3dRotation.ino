@@ -1,6 +1,6 @@
 /*
  * Project: 3dRotation
- * Description: A rotating 3d object on an arduino UNO with a SSD1306 OLED 128x64 pixel display.
+ * Description: A rotating 3d object on an arduino UNO/NANO with a SSD1306 OLED 128x64 pixel display.
  * License: CC0
  * 
  * created by codingABI https://github.com/codingABI/3dRotation (inspired by https://wokwi.com/projects/328271658006610514)
