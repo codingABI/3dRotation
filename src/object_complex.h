@@ -60,7 +60,7 @@ const PROGMEM signed char points3d[MAXPOINTS][3] = {
 
 // build mesh from points (all polygons must be defined counterclockwise, otherwise hiding of backsides will not work)
 
-// List of ordered points for triangles and rectangles
+// List of ordered points for triangles and quadrangles
 #define MAXTRIANGLES 24 
 const PROGMEM byte triangleList[MAXTRIANGLES][3] {
   // Left
@@ -91,8 +91,8 @@ const PROGMEM byte triangleList[MAXTRIANGLES][3] {
   { P24, P17, P22 },
 };
 
-#define MAXQUADS 6
-const PROGMEM byte quadList[MAXQUADS][4] {
+#define MAXQUADRANGLES 6
+const PROGMEM byte quadrangleList[MAXQUADRANGLES][4] {
   // Middle
   { P4, P3, P2, P1 }, 
   { P5, P6, P7, P8 },
