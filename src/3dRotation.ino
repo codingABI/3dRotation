@@ -269,7 +269,7 @@ void loop(void) {
   }
 
   // show frames per second
-  if (fps < 1000) sprintf(strFPS,"fps %d",fps); else strcpy(strFPS,"fps inv");
+  if (fps < 1000) sprintf(strFPS,"fps %2d",fps); else strcpy(strFPS,"fps inv");
   display.setCursor(0,55);
   display.println(strFPS);
 
