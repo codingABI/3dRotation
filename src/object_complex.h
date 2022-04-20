@@ -29,60 +29,75 @@
 #define P24 23
 #define MAXPOINTS 24
 const PROGMEM signed char points3d[MAXPOINTS][3] = {
-  {-16,0,16},
+  // Middle
+  {-44,0,16},
   {0,16,16},
-  {16,0,16},
+  {44,0,16},
   {0,-16,16},
-  {-16,0,-16},
+  {-44,0,-16},
   {0,16,-16},
-  {16,0,-16},
+  {44,0,-16},
   {0,-16,-16},
-
-  {-48,48,-48},
+  // Left
+  {-48,0,64},
   {-48,48,48},
-  {-48,-48,48},
+  {-48,48,-48},
+  {-48,0,-64},
   {-48,-48,-48},
-  {-50,48,-48},
-  {-50,48,48},
-  {-50,-48,48},
-  {-50,-48,-48},
-
-  {48,48,-48},
+  {-48,-48,48},
+  {-58,0,0},
+  {-44,0,0},
+  // Right
+  {48,0,64},
   {48,48,48},
-  {48,-48,48},
+  {48,48,-48},
+  {48,0,-64},
   {48,-48,-48},
-  {50,48,-48},
-  {50,48,48},
-  {50,-48,48},
-  {50,-48,-48}
-
+  {48,-48,48},
+  {44,0,0},
+  {58,0,0},
 };
 
 // build mesh from points (all polygons must be defined counterclockwise, otherwise hiding of backsides will not work)
 
-// List of arranged points for triangles and rectangles
-#define MAXTRIANGLES 0
-const PROGMEM byte triangleList[MAXTRIANGLES][3] {};
+// List of orderd points for triangles and rectangles
+#define MAXTRIANGLES 24 
+const PROGMEM byte triangleList[MAXTRIANGLES][3] {
+  // Left
+  { P9, P10, P15 },
+  { P10, P11,  P15 },
+  { P11, P12,  P15 },
+  { P12, P13,  P15 },
+  { P13, P14,  P15 },
+  { P14, P9,  P15 },
+  { P16, P10, P9 },
+  { P16, P11, P10 },
+  { P16, P12, P11 },
+  { P16, P13, P12 },
+  { P16, P14, P13 },
+  { P16, P9, P14 },
+  // Right
+  { P17, P18, P23 },
+  { P18, P19, P23 },
+  { P19, P20, P23 },
+  { P20, P21, P23 },
+  { P21, P22, P23 },
+  { P22, P17, P23 },
+  { P24, P18, P17 },
+  { P24, P19, P18 },
+  { P24, P20, P19 },
+  { P24, P21, P20 },
+  { P24, P22, P21 },
+  { P24, P17, P22 },
+};
 
-#define MAXRECTS 18
-const PROGMEM byte rectList[MAXRECTS][4] {
-  { P4, P3, P2, P1 },
+#define MAXRECTANGLES 6
+const PROGMEM byte rectangleList[MAXRECTANGLES][4] {
+  // Middle
+  { P4, P3, P2, P1 }, 
   { P5, P6,  P7,  P8 },
   { P1, P2,  P6,  P5 },
   { P8, P7,  P3,  P4 },
   { P3, P7,  P6,  P2 },
   { P4, P1, P5, P8 },
-  { P12, P11, P10, P9 },
-  { P13, P14,  P15,  P16 },
-  { P9, P10,  P14,  P13 },
-  { P16, P15,  P11,  P12 },
-  { P11, P15,  P14,  P10 },
-  { P12, P9, P13, P16 },
-
-  { P20, P19, P18, P17 },
-  { P21, P22,  P23,  P24 },
-  { P17, P18,  P22,  P21 },
-  { P24, P23,  P19,  P20 },
-  { P19, P23,  P22,  P18 },
-  { P20, P17, P21, P24 }
 };
