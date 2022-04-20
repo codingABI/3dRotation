@@ -56,5 +56,5 @@ const PROGMEM byte triangleList[MAXTRIANGLES][3] {
   { P6, P9, P10 }
 };
 
-#define MAXRECTANGLES 0
-const PROGMEM byte rectangleList[MAXRECTANGLES][4] {};
+#define MAXQUADS 0
+const PROGMEM byte quadList[MAXQUADS][4] {};

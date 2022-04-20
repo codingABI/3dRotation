@@ -65,11 +65,11 @@ const PROGMEM signed char points3d[MAXPOINTS][3] = {
 const PROGMEM byte triangleList[MAXTRIANGLES][3] {
   // Left
   { P9, P10, P15 },
-  { P10, P11,  P15 },
-  { P11, P12,  P15 },
-  { P12, P13,  P15 },
-  { P13, P14,  P15 },
-  { P14, P9,  P15 },
+  { P10, P11, P15 },
+  { P11, P12, P15 },
+  { P12, P13, P15 },
+  { P13, P14, P15 },
+  { P14, P9, P15 },
   { P16, P10, P9 },
   { P16, P11, P10 },
   { P16, P12, P11 },
@@ -91,13 +91,13 @@ const PROGMEM byte triangleList[MAXTRIANGLES][3] {
   { P24, P17, P22 },
 };
 
-#define MAXRECTANGLES 6
-const PROGMEM byte rectangleList[MAXRECTANGLES][4] {
+#define MAXQUADS 6
+const PROGMEM byte quadList[MAXQUADS][4] {
   // Middle
   { P4, P3, P2, P1 }, 
-  { P5, P6,  P7,  P8 },
-  { P1, P2,  P6,  P5 },
-  { P8, P7,  P3,  P4 },
-  { P3, P7,  P6,  P2 },
+  { P5, P6, P7, P8 },
+  { P1, P2, P6, P5 },
+  { P8, P7, P3, P4 },
+  { P3, P7, P6, P2 },
   { P4, P1, P5, P8 },
 };
