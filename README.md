@@ -77,6 +77,6 @@ Ordered display list:
 | Triangle | 4 | 32 | 0 |
 | Quadrangle | 0 | 32 | 32 |
 
-Here is an example for a wrong display order, which can not be solved by z-value sorting. To solve this problem, the large side quadrangles need to be split into smaller polygons.
+Here is an example for a wrong display order, which can not be solved by z-value sorting. To solve this problem, the large side-quadrangles need to be split into smaller polygons.
 
 ![glitch example](/assets/images/glitch.png) 
