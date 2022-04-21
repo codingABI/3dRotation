@@ -64,7 +64,7 @@ displayListEntry displayList[MAXTRIANGLES+MAXQUADRANGLES];
 byte x3dTo2D (signed char x, signed char z) {
   float value;
   if (z-viewerDistance != 0) {
-    value = (float) 64 + viewerScale * x/(z-viewerDistance); 
+    value = (float) SCREEN_WIDTH/2 + viewerScale * x/(z-viewerDistance); 
     if (value > SCREEN_WIDTH-1) value = SCREEN_WIDTH-1;
     if (value < 0) value = 0;
     return value;
@@ -75,7 +75,7 @@ byte x3dTo2D (signed char x, signed char z) {
 byte y3dTo2D (signed char y, signed char  z) {
   float value;
   if (z-viewerDistance != 0) {
-    value = (float) 32 - viewerScale * y/(z-viewerDistance);
+    value = (float) SCREEN_HEIGHT/2 - viewerScale * y/(z-viewerDistance);
     if (value > SCREEN_HEIGHT-1) value = SCREEN_HEIGHT-1;
     if (value < 0) value = 0;
     return value;
