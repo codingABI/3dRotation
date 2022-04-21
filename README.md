@@ -27,7 +27,7 @@ To define which side of a polygon is inner or outer, all polygons (triangles or 
 
 For example: The order for the polygon, spanned by points P1 to P4, is **P4, P3, P2, P1**
 
-![ordered quadrangles](/assets/images/OrderedQuadrangles.svg)
+![ordered quadrangles](/assets/images/OrderedQuadrangle.svg)
 
 ## Triangles:
 | Nr | Ordered points |
