@@ -1,12 +1,12 @@
 # 3dRotation
 A rotating 3d object on an arduino UNO/NANO with a SSD1306 OLED 128x64 pixel display.
 
-![alt text](/assets/images/Capture.gif) 
+![captured display sequence](/assets/images/Capture.gif) 
 
 Simulation https://wokwi.com/projects/329034737849991764
 
 ## Used 3D-Object
-![alt text](/assets/images/Object.svg)
+![default 3d object](/assets/images/Object.svg)
 
 ## Points
 | Point | X | Y | Z |
@@ -27,7 +27,7 @@ To define which side of a polygon is inner or outer, all polygons (triangles or 
 
 For example: The order for the polygon, spanned by points P1 to P4, is **P4, P3, P2, P1**
 
-![alt text](/assets/images/OrderRectangle0.svg)
+![ordered quadrangles](/assets/images/OrderedQuadrangles.svg)
 
 ## Triangles:
 | Nr | Ordered points |
@@ -54,13 +54,13 @@ To detect which polygon is visible and needs to be drawn on screen or not, the o
 
 The following figure shows an example (Green = counterclockwise => Visible, frontside, Red = clockwise => Invisible, backside). To keep it simple, only the orders for the quadrangles are marked in the figure: 
 
-![alt text](/assets/images/DetectBacksides.svg)
+![detect backsides](/assets/images/DetectBacksides.svg)
 
 ## Overlapping objects
-When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all polygons are sorted by their minimal z-values and displayed according to the z-values. Glitches are possible due large polygons or perspective distortion.
+When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is no option. To allow at least simple overlapping objects, all polygons are sorted by their minimal z-values and displayed by increasing z-values. Glitches are possible due large polygons or perspective distortion.
 
 Ordered display list:
-| Polygons type | Nr | Maximal z | Minimal z |
+| Polygons type | Nr | Maximal z-value | Minimal z-value |
 | --- | --- | --- | --- |
 | Quadrangle | 1 | -32 | -32 |
 | Triangle | 1 | 0 | -32 |
@@ -74,3 +74,6 @@ Ordered display list:
 | Triangle | 0 | 32 | 0 |
 | Triangle | 4 | 32 | 0 |
 | Quadrangle | 0 | 32 | 32 |
+
+Here is an example for a wrong display order, which can not be solved by z-value sorting. To solve this problem, the large side quadrangles need to be split in smaller polygons.
+![glitch example](/assets/images/glitch.png) 
