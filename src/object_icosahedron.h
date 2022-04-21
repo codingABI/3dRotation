@@ -37,14 +37,14 @@ const PROGMEM signed char points3d[MAXPOINTS][3] = {
 // List of ordered points for triangles and quadrangles
 #define MAXTRIANGLES 20
 const PROGMEM byte triangleList[MAXTRIANGLES][3] {
-  { P1,P9,P4},
-  { P9,P6,P4},
-  { P1,P5,P9},
-  { P5,P2,P10},
-  { P8,P5,P1},
-  { P8,P1,P12},
+  { P1, P9, P4 },
+  { P9, P6, P4 },
+  { P1, P5, P9 },
+  { P5, P2, P10 },
+  { P8, P5, P1 },
+  { P8, P1, P12 },
   { P5, P10, P9 },
-  { P12,P1,P4},
+  { P12, P1, P4},
   { P7, P4, P6 },
   { P7, P6, P3 },
   { P7, P12, P4 },
