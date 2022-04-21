@@ -61,24 +61,16 @@ struct displayListEntry {
 displayListEntry displayList[MAXTRIANGLES+MAXQUADRANGLES];
 
 // projection for x to 2d
-byte x3dTo2D (signed char x, signed char z) {
-  float value;
+int x3dTo2D (signed char x, signed char z) {
   if (z-viewerDistance != 0) {
-    value = (float) SCREEN_WIDTH/2 + viewerScale * x/(z-viewerDistance); 
-    if (value > SCREEN_WIDTH-1) value = SCREEN_WIDTH-1;
-    if (value < 0) value = 0;
-    return value;
+    return (float) SCREEN_WIDTH/2 + viewerScale * x/(z-viewerDistance);
   } else return 0;
 }
 
 // projection for y to 2d
-byte y3dTo2D (signed char y, signed char  z) {
-  float value;
+int y3dTo2D (signed char y, signed char  z) {
   if (z-viewerDistance != 0) {
-    value = (float) SCREEN_HEIGHT/2 - viewerScale * y/(z-viewerDistance);
-    if (value > SCREEN_HEIGHT-1) value = SCREEN_HEIGHT-1;
-    if (value < 0) value = 0;
-    return value;
+    return (float) SCREEN_HEIGHT/2 - viewerScale * y/(z-viewerDistance);
   } else return 0;
 }
 
