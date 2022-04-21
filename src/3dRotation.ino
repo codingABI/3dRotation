@@ -13,6 +13,7 @@
  * 18.04.2022, Add three alternative 3d objects
  * 19.04.2022, Add ordered display list to support overlapping objects (still glitches due perspective and large polygons, but usable and I have currently no better solution without z-buffer)
  * 20.04.2022, Improve object_complex.h (more smaller triangles, less glitches when overlapping)
+ * 21.04.2022, Fix bug in ordering display list
  */
 
 #include <SPI.h>
@@ -22,7 +23,7 @@
 
 #define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. #undef in object_*.h file, if you want to fill polygons 
 
-// Include always only one object_*.h-File at at time
+// Include always only one 3d object_*.h-File at a time
 #include "object_default.h" // default 3d object
 //#include "object_spaceship.h" // alternative 3d model
 //#include "object_cubes.h" // another alternative 3d model
@@ -44,7 +45,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define TYPE_QUADRANGLE 1
 
 // global variables
-int viewerDistance = 200; // z-distance between 0/0/0-point and viewer/camera 
+int viewerDistance = 200; // z-value for viewer/camera 
 int viewerScale = 60; // 2d scale
 
 // transformed points
@@ -61,16 +62,24 @@ displayListEntry displayList[MAXTRIANGLES+MAXQUADRANGLES];
 
 // projection for x to 2d
 byte x3dTo2D (signed char x, signed char z) {
-    if (z+viewerDistance != 0) {
-      return (float) 64 + viewerScale * x/(z+viewerDistance);
-    } else return 0;
+  float value;
+  if (z-viewerDistance != 0) {
+    value = (float) 64 + viewerScale * x/(z-viewerDistance); 
+    if (value > SCREEN_WIDTH-1) value = SCREEN_WIDTH-1;
+    if (value < 0) value = 0;
+    return value;
+  } else return 0;
 }
 
 // projection for y to 2d
 byte y3dTo2D (signed char y, signed char  z) {
-    if (z+viewerDistance != 0) {
-      return (float) 32 - viewerScale * y/(z+viewerDistance);
-    } else return 0;
+  float value;
+  if (z-viewerDistance != 0) {
+    value = (float) 32 - viewerScale * y/(z-viewerDistance);
+    if (value > SCREEN_HEIGHT-1) value = SCREEN_HEIGHT-1;
+    if (value < 0) value = 0;
+    return value;
+  } else return 0;
 }
 
 // detect backsides for polygons (clockwise = backside, based on idea from https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order)
@@ -102,12 +111,13 @@ bool isBackface(byte type, int i) {
       }
     break;
   }
-  return (sum >= 0);
+  // sum < 0 is counterclockwise in xy-coordinatesystem, but clockwise in screen-coordinatesystem 
+  return (sum < 0);
 }
 
 // get highest z-value from polygon
 signed char getMaxZ(byte type, byte i) {
-  signed char maxZ = -127;
+  signed char maxZ = -128;
 
   switch (type) {
     case TYPE_TRIANGLE:
@@ -117,7 +127,6 @@ signed char getMaxZ(byte type, byte i) {
       for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(quadrangleList[displayList[i].nbr][j]))][Z] > maxZ) maxZ = pointsTransformed3d[pgm_read_byte(&(quadrangleList[displayList[i].nbr][j]))][Z];
     break;
   }  
-
   return  maxZ;
 }
 
@@ -133,7 +142,6 @@ signed char getMinZ(byte type, byte i) {
       for (byte j=0;j<4;j++) if (pointsTransformed3d[pgm_read_byte(&(quadrangleList[displayList[i].nbr][j]))][Z] < minZ) minZ = pointsTransformed3d[pgm_read_byte(&(quadrangleList[displayList[i].nbr][j]))][Z];
     break;
   }  
-
   return  minZ;
 }
 
@@ -143,7 +151,7 @@ void sortDisplayList() {
   // bouble sort
   for (byte i=0;i<MAXTRIANGLES+MAXQUADRANGLES - 1;i++) {
     for (byte j=0;j<MAXTRIANGLES+MAXQUADRANGLES-i-1;j++) {
-      if ((displayList[j].minZ < displayList[j+1].minZ) || ((displayList[j].minZ == displayList[j+1].minZ) && (displayList[j].maxZ < displayList[j+1].maxZ))) {
+      if ((displayList[j].minZ > displayList[j+1].minZ) || ((displayList[j].minZ == displayList[j+1].minZ) && (displayList[j].maxZ > displayList[j+1].maxZ))) {
         tempEntry = displayList[j];
         displayList[j] = displayList[j+1];
         displayList[j+1] = tempEntry;

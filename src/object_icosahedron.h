@@ -1,4 +1,7 @@
-// icosahedron
+/* 
+ * icosahedron
+ * We have only a small 3d world with x=[-128,127], y=[-128,127], z=[-128,127]
+ */
 
 // original points x,y,z
 #define P1 0

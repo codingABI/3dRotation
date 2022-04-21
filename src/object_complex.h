@@ -1,4 +1,7 @@
-// overlapping more complex object
+/* 
+ * overlapping more complex object
+ * We have only a small 3d world with x=[-128,127], y=[-128,127], z=[-128,127]
+ */
 
 #undef DRAWONLYLINES
 

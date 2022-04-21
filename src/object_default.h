@@ -1,4 +1,7 @@
-// Default 3d object
+/*
+ * Default 3d object
+ * We have only a small 3d world with x=[-128,127], y=[-128,127], z=[-128,127]
+ */
 
 // original points x,y,z
 #define P1 0
@@ -11,6 +14,7 @@
 #define P8 7
 #define P9 8
 #define P10 9
+
 #define MAXPOINTS 10
 const PROGMEM signed char points3d[MAXPOINTS][3] = {
   {-32,32,32},

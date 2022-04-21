@@ -1,4 +1,7 @@
-// More detailed object (spaceship like)
+/* 
+ * More detailed object (spaceship like)
+ * We have only a small 3d world with x=[-128,127], y=[-128,127], z=[-128,127]
+ */
 
 // original points x,y,z
 #define P1 0
@@ -20,7 +23,7 @@
 #define P17 16
 #define P18 17
 #define MAXPOINTS 18
-const PROGMEM signed char points3d[MAXPOINTS][3] = {
+const PROGMEM signed char points3d[MAXPOINTS][3] = { // 3d points x,y,z can be [-128;127]
   {-16,32,32},
   {16,32,32},
   {16,-32,32},
