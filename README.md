@@ -63,7 +63,7 @@ When multiple objects overlap or an object overlaps itself, we need to fill the 
 
 Ordered display list:
 | Display order position | Polygon type | Nr | Maximal z-value | Minimal z-value |
-| --- | --- | :---: | :---: | :---: |
+| ---: | --- | :---: | :---: | :---: |
 | 0 | Quadrangle | 1 | -32 | -32 |
 | 1 | Triangle | 1 | 0 | -32 |
 | 2 | Triangle | 6 | 0 | -32 |
