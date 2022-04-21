@@ -57,10 +57,12 @@ The following figure shows an example (Green = counterclockwise => Visible, fron
 ![detect backsides](/assets/images/DetectBacksides.svg)
 
 ## Overlapping objects
-When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is no option. To allow at least simple overlapping objects, all polygons are sorted by their minimal z-values and displayed by increasing z-values. Glitches are possible due large polygons or perspective distortion.
+For simple convex objects, which has no overlapping parts drawing only the outer lines without filling the polygons is sufficient and the order in which the polygons are rendered does not matter.  
+
+When multiple objects overlap or an object overlaps itself, we need to fill the polygons (as we have only black and white, we fill with black) and the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is no option. To allow at least simple overlapping objects, all polygons are sorted by their minimal z-values and displayed by increasing z-values. Glitches are possible due large polygons or perspective distortion.
 
 Ordered display list:
-| Polygons type | Nr | Maximal z-value | Minimal z-value |
+| Polygon type | Nr | Maximal z-value | Minimal z-value |
 | --- | --- | --- | --- |
 | Quadrangle | 1 | -32 | -32 |
 | Triangle | 1 | 0 | -32 |
@@ -76,4 +78,5 @@ Ordered display list:
 | Quadrangle | 0 | 32 | 32 |
 
 Here is an example for a wrong display order, which can not be solved by z-value sorting. To solve this problem, the large side quadrangles need to be split in smaller polygons.
+
 ![glitch example](/assets/images/glitch.png) 
