@@ -57,4 +57,20 @@ The following figure shows an example (Green = counterclockwise => Visible, fron
 ![alt text](/assets/images/DetectBacksides.svg)
 
 ## Overlapping objects
-When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all polygons are sorted by their z-values and displayed according to the z-values. Glitches are possible due large polygons or perspective distortion.
+When multiple objects overlap or an object overlaps itself, the order in which the polygons are rendered plays an important role. Since only 2KByte RAM is available on an ATMEGA328 microcontroller, no z-buffer is possible. To allow at least simple overlapping objects, all polygons are sorted by their minimal z-values and displayed according to the z-values. Glitches are possible due large polygons or perspective distortion.
+
+Ordered display list:
+| Polygons type | Nr | Maximal z | Minimal z |
+| --- | --- | --- | --- |
+| Quadrangle | 1 | -32 | -32 |
+| Triangle | 1 | 0 | -32 |
+| Triangle | 6 | 0 | -32 |
+| Triangle | 2 | 32 | -32 |
+| Triangle | 3 | 32 | -32 |
+| Triangle | 5 | 32 | -32 |
+| Triangle | 7 | 32 | -32 |
+| Quadrangle | 2 | 32 | -32 |
+| Quadrangle | 3 | 32 | -32 |
+| Triangle | 0 | 32 | 0 |
+| Triangle | 4 | 32 | 0 |
+| Quadrangle | 0 | 32 | 32 |
