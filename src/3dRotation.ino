@@ -24,11 +24,11 @@
 #define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. #undef in object_*.h file, if you want to fill polygons 
 
 // Include always only one 3d object_*.h-File at a time
-#include "object_default.h" // default 3d object
+//#include "object_default.h" // default 3d object
 //#include "object_spaceship.h" // alternative 3d model
 //#include "object_cubes.h" // another alternative 3d model
 //#include "object_icosahedron.h" // just another alternative 3d model
-//#include "object_complex.h" // overlapping 3d model
+#include "object_complex.h" // overlapping 3d model
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -104,7 +104,8 @@ bool isBackface(byte type, int i) {
     break;
   }
   // sum < 0 is counterclockwise in xy-coordinatesystem, but clockwise in screen-coordinatesystem 
-  return (sum < 0);
+  // sum = 0 is when the polygon collaps just to a single line
+  return (sum <= 0);
 }
 
 // get highest z-value from polygon
