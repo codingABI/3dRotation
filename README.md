@@ -5,6 +5,8 @@ A rotating 3d object on an arduino UNO/NANO with a SSD1306 OLED 128x64 pixel dis
 
 Simulation https://wokwi.com/projects/329034737849991764
 
+Video https://www.youtube.com/watch?v=705kT8A-B_I
+
 ## Used 3D-Object
 ![default 3d object](/assets/images/Object.svg)
 
