@@ -15,7 +15,7 @@
    version="1.1"
    id="svg1835"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="Direction.svg"
+   sodipodi:docname="OrderedQuadrangle.svg"
    inkscape:export-filename="c:\temp\object.png"
    inkscape:export-xdpi="60"
    inkscape:export-ydpi="60">
@@ -209,9 +209,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="128.60544"
-     inkscape:cy="59.422387"
+     inkscape:zoom="5.6984375"
+     inkscape:cx="52.707442"
+     inkscape:cy="248.46239"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -321,7 +321,7 @@
        sodipodi:ry="20"
        sodipodi:start="4.3633231"
        sodipodi:end="1.5707963"
-       d="m 63.072538,147.42746 a 20,20 0 0 1 21.387876,5.06902 20,20 0 0 1 3.816849,21.64643 20,20 0 0 1 -18.364321,12.0784"
+       d="m 63.072538,147.42746 a 20,20 0 0 1 21.387875,5.06902 20,20 0 0 1 3.81685,21.64643 20,20 0 0 1 -18.364321,12.0784"
        sodipodi:open="true" />
   </g>
   <g
@@ -425,16 +425,5 @@
          id="tspan943"
          x="94.717728"
          y="126.36403">P2</tspan></text>
-    <path
-       style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4611"
-       sodipodi:type="arc"
-       sodipodi:cx="33.831562"
-       sodipodi:cy="94.05854"
-       sodipodi:rx="15.100729"
-       sodipodi:ry="22.717911"
-       sodipodi:start="0.15707963"
-       sodipodi:end="3.1415927"
-       d="M 48.746376,97.612405 A 15.100729,22.717911 0 0 1 32.646772,116.70642 15.100729,22.717911 0 0 1 18.730833,94.058539 l 15.100729,10e-7 z" />
   </g>
 </svg>
