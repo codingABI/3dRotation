@@ -1,5 +1,5 @@
 # 3dRotation
-A rotating 3d object on an arduino UNO/NANO with a SSD1306 OLED 128x64 pixel display.
+A rotating 3d object on an Arduino Uno/Nano with a SSD1306 OLED 128x64 pixel display.
 
 ![captured display sequence](/assets/images/Capture.gif) 
 
