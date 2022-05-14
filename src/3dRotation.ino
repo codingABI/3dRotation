@@ -19,7 +19,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_SSD1306.h> // dont forget to uncomment #define SSD1306_NO_SPLASH in Adafruit_SSD1306.h to free program storage
 
 #define DRAWONLYLINES // do not fill polygons with black. is faster, but can causes artifacts on complex objects. #undef in object_*.h file, if you want to fill polygons 
 
