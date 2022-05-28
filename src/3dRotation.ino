@@ -14,6 +14,7 @@
  * 19.04.2022, Add ordered display list to support overlapping objects (still glitches due perspective and large polygons, but usable and I have currently no better solution without z-buffer)
  * 20.04.2022, Improve object_complex.h (more smaller triangles, less glitches when overlapping)
  * 21.04.2022, Fix bug in ordering display list
+ * 27.05.2022, Release version v0.1.0
  */
 
 #include <SPI.h>
